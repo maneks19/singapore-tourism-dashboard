@@ -27,7 +27,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DASHBOARD = path.join(__dirname, 'singapore_tourism_dashboard.html');
+const DASHBOARD = path.join(__dirname, 'index.html');
 
 // Country-to-region mapping (fallback if CSV doesn't include region)
 const COUNTRY_REGION = {};
