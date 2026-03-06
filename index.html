@@ -756,6 +756,29 @@ YEARS.forEach(y=>{[fYF,fYT].forEach(sel=>{const o=document.createElement('option
 fYF.value=YEARS[0];fYT.value=YEARS[YEARS.length-1];
 
 
+// --- URL Hash State ---
+function writeHash(){
+  const params=new URLSearchParams();
+  if(fR.value!=='All')params.set('region',fR.value);
+  if(fC.value!=='All')params.set('country',fC.value);
+  if(fYF.value!==String(YEARS[0]))params.set('from',fYF.value);
+  if(fYT.value!==String(YEARS[YEARS.length-1]))params.set('to',fYT.value);
+  if(!fCov.checked)params.set('covid','include');
+  if(scatterHorizon!=='yoy')params.set('hz',scatterHorizon);
+  const hash=params.toString();
+  history.replaceState(null,null,hash?'#'+hash:'#');
+}
+function readHash(){
+  const hash=location.hash.slice(1);if(!hash)return;
+  const p=new URLSearchParams(hash);
+  if(p.has('region')){fR.value=p.get('region');fR.dispatchEvent(new Event('change'))}
+  if(p.has('country'))fC.value=p.get('country');
+  if(p.has('from'))fYF.value=p.get('from');
+  if(p.has('to'))fYT.value=p.get('to');
+  if(p.get('covid')==='include'){fCov.checked=false;document.querySelectorAll('#covidToggle .covid-opt').forEach(o=>{o.classList.toggle('active',o.dataset.val==='include')})}
+  if(p.has('hz')){scatterHorizon=p.get('hz');document.querySelectorAll('#scatterHorizonTabs .tab').forEach(t=>{t.classList.toggle('active',t.dataset.hz===scatterHorizon)})}
+}
+
 fR.addEventListener('change',()=>{
   const r=fR.value;
   fC.innerHTML='<option value="All">All Countries</option>';
@@ -942,6 +965,7 @@ let charts={};
 function getOrCreate(id,cfg){if(charts[id]){charts[id].destroy()}charts[id]=new Chart(document.getElementById(id),cfg);return charts[id]}
 
 function update(){
+  writeHash();
   // Auto-switch Growth & Loss Markets to "By Country" when a specific country is selected
   if(fC.value!=='All'&&fMV.value==='region'){fMV.value='country';document.getElementById('moverRegionGroup').style.display=''}
   const fd=getFiltered();
@@ -2144,8 +2168,10 @@ function updateDetailTable(fd){
   document.getElementById('footerCoverage').textContent=yrs[0]+' – '+maxYr+' · Monthly arrivals by country';
 })();
 
-// Initial render
+// Read URL hash state and render
+readHash();
 update();
+window.addEventListener('hashchange',()=>{readHash();update()});
 </script>
 </body>
 </html>
