@@ -60,6 +60,12 @@ select:focus{outline:none;border-color:var(--accent)}
 .kpi-change.neutral{color:#6b6b6b;background:#ece8e3}
 .kpi-record{display:none;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;margin-top:10px;align-items:center;gap:4px}
 .kpi-record.show{display:inline-flex}
+.summary-card{display:flex;align-items:flex-start;gap:12px;padding:16px 20px;margin-bottom:16px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);border-left:4px solid var(--accent3)}
+.summary-card .summary-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.summary-card p{font-size:13px;line-height:1.65;color:var(--text);margin:0}
+.summary-card .s-up{color:#11817a;font-weight:700}
+.summary-card .s-down{color:#c4182a;font-weight:700}
+.summary-card .s-bold{font-weight:600}
 .insights-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px;padding:16px 20px;background:var(--card);border-radius:12px;box-shadow:var(--shadow);border-left:4px solid var(--accent3);align-items:flex-start}
 .insights-bar .insights-label{font-size:10px;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;width:100%}
 .insights-chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -224,6 +230,11 @@ select:focus{outline:none;border-color:var(--accent)}
   .kpi-label{font-size:9px;letter-spacing:.8px}
   .kpi-change{font-size:10px;padding:3px 8px}
   .kpi-sub{gap:4px}
+
+  /* Summary card */
+  .summary-card{padding:12px 14px;margin-bottom:12px;gap:8px}
+  .summary-card p{font-size:12px;line-height:1.55}
+  .summary-card .summary-icon{font-size:15px}
 
   /* Insights bar */
   .insights-bar{padding:10px 12px;margin-bottom:16px;border-radius:10px}
@@ -394,6 +405,12 @@ select:focus{outline:none;border-color:var(--accent)}
 <div class="kpi"><div class="kpi-label">Overnight Visitors</div><div class="kpi-value" id="kpiOvernight">—</div><div class="kpi-sub"><span id="kpiOvnYoy" class="kpi-change neutral">—</span><span id="kpiOvnVs19" class="kpi-change neutral">vs 2019: —</span></div><div class="kpi-record" id="recOvn">&#9733; Record Year</div></div>
 <div class="kpi"><div class="kpi-label">Overnight Share</div><div class="kpi-value" id="kpiShare">—</div><div class="kpi-sub"><span id="kpiShareYoy" class="kpi-change neutral">—</span><span id="kpiShareVs19" class="kpi-change neutral">vs 2019: —</span></div><div class="kpi-record" id="recShare">&#9733; Record Year</div></div>
 <div class="kpi"><div class="kpi-label">Avg Length of Stay</div><div class="kpi-value" id="kpiAlos">—</div><div class="kpi-sub"><span id="kpiAlosYoy" class="kpi-change neutral">—</span><span id="kpiAlosVs19" class="kpi-change neutral">vs 2019: —</span></div><div class="kpi-record" id="recAlos">&#9733; Record Year</div></div>
+</div>
+
+<!-- Dynamic Summary -->
+<div class="summary-card" id="summaryCard">
+<div class="summary-icon">📊</div>
+<p id="summaryText">Loading summary…</p>
 </div>
 
 <!-- Key Insights -->
@@ -970,6 +987,7 @@ function update(){
   if(fC.value!=='All'&&fMV.value==='region'){fMV.value='country';document.getElementById('moverRegionGroup').style.display=''}
   const fd=getFiltered();
   updateKPIs(fd);
+  updateSummary(fd);
   updateInsights(fd);
   updateTrendChart(fd);
   updateAnnualChart(fd);
@@ -1259,6 +1277,54 @@ function updateInsights(fd){
   if(marketChips.length)html+=sectionLabel('Markets')+marketChips.join('');
   if(profileChips.length)html+=sectionLabel('Profile')+profileChips.join('');
   document.getElementById('insightsChips').innerHTML=html;
+}
+
+// --- Dynamic Summary ---
+function updateSummary(fd){
+  if(!fd.length){document.getElementById('summaryText').textContent='No data for selected filters.';return}
+  const yrs=[...new Set(fd.map(d=>d.year))].sort((a,b)=>a-b);
+  const latest=yrs[yrs.length-1];
+  const latestMs=[...new Set(fd.filter(d=>d.year===latest).map(d=>d.month))];
+  const useYr=latestMs.length>=12?latest:(yrs.length>1?yrs[yrs.length-2]:latest);
+  const isPartial=useYr===latest&&latestMs.length<12;
+  const curD=fd.filter(d=>d.year===useYr);
+  const curMs=new Set(curD.map(d=>d.month));
+  const prevD=applyGeo(DATA.filter(d=>d.year===useYr-1&&curMs.has(d.month)));
+  const y19D=applyGeo(DATA.filter(d=>d.year===2019&&curMs.has(d.month)));
+  const ca=sumA(curD),pa=sumA(prevD),na=sumA(y19D);
+  const yoy=pa?((ca-pa)/pa*100):null;
+  const vs19=na?((ca-na)/na*100):null;
+  const parts=[];
+  // Sentence 1: overall performance
+  if(yoy!==null){
+    const dir=yoy>=0?'up':'down';
+    const cls=yoy>=0?'s-up':'s-down';
+    const period=isPartial?'YTD':'full-year';
+    parts.push(`<span class="${cls}">${useYr} ${period} arrivals are ${Math.abs(yoy).toFixed(1)}% ${dir}</span> versus ${useYr-1}.`);
+  }
+  // Sentence 2: top movers (country level)
+  if(fC.value==='All'&&prevD.length){
+    const byCur={},byPrev={};
+    curD.forEach(d=>{byCur[d.country]=(byCur[d.country]||0)+d.arrivals});
+    prevD.forEach(d=>{byPrev[d.country]=(byPrev[d.country]||0)+d.arrivals});
+    const movers=Object.entries(byCur).map(([c,v])=>{const pv=byPrev[c]||0;return{c,abs:v-pv,pct:pv?(v-pv)/pv*100:null}}).filter(m=>m.pct!==null&&(byPrev[m.c]||0)>500);
+    const gainers=movers.filter(m=>m.abs>0).sort((a,b)=>b.abs-a.abs);
+    const losers=movers.filter(m=>m.abs<0).sort((a,b)=>a.abs-b.abs);
+    if(gainers.length>=2){
+      const g1=gainers[0],g2=gainers[1];
+      parts.push(`Led by <span class="s-bold">${g1.c}</span> (+${g1.pct.toFixed(0)}%) and <span class="s-bold">${g2.c}</span> (+${g2.pct.toFixed(0)}%).`);
+    }
+    if(losers.length>=1){
+      const l1=losers[0];
+      parts.push(`<span class="s-bold">${l1.c}</span> declined most (${l1.pct.toFixed(0)}%).`);
+    }
+  }
+  // Sentence 3: vs 2019
+  if(vs19!==null&&useYr>2019){
+    if(vs19>=0)parts.push(`Arrivals have <span class="s-up">surpassed 2019 levels by ${vs19.toFixed(1)}%</span>.`);
+    else parts.push(`Recovery stands at <span class="s-down">${(100+vs19).toFixed(0)}% of 2019 levels</span>.`);
+  }
+  document.getElementById('summaryText').innerHTML=parts.join(' ');
 }
 
 // --- Trend Chart ---
