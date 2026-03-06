@@ -140,6 +140,10 @@ select:focus{outline:none;border-color:var(--accent)}
 ::-webkit-scrollbar-thumb{background:#c5c0ba;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#a09a93}
 
+/* Footer */
+.dash-footer{margin-top:32px;padding:20px 0;border-top:1px solid #d6cfc7;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12px;color:#8c8279}
+.dash-footer-col{display:flex;flex-direction:column;gap:4px}
+
 /* ===== Responsive breakpoints ===== */
 
 /* Large tablets / small desktops */
@@ -161,55 +165,128 @@ select:focus{outline:none;border-color:var(--accent)}
   .card h3{font-size:14px}
   .chart-container{min-height:250px}
   .chart-container.short{min-height:200px}
-  .insights-chips{gap:6px}
-  .insight-chip{padding:6px 10px;font-size:11px}
-  /* Stack the Regional Breakdown header controls */
+  /* Stack flex headers */
   div[style*="justify-content:space-between"]{flex-direction:column;align-items:flex-start!important}
   .mover-filter-bar{flex-direction:column}
   .mover-filter-item{border-right:none;border-bottom:1px solid var(--border)}
   .mover-filter-item:last-child{border-bottom:none}
+  .insights-chips{gap:6px}
+  .insight-chip{padding:6px 10px;font-size:11px}
 }
 
 /* Mobile phones */
 @media(max-width:600px){
   body{font-size:13px}
-  .dashboard{padding:10px}
-  .header-brand{gap:12px}
-  .header-logo{width:48px}
-  .header-text h1{font-size:clamp(16px,5vw,22px)}
-  .header-text p{font-size:11px}
-  .header-badge{font-size:9px;padding:3px 7px}
-  .kpis{grid-template-columns:1fr 1fr;gap:10px}
-  .kpi{padding:14px 16px;border-left-width:3px}
-  .kpi-value{font-size:clamp(22px,6vw,32px)}
-  .kpi-label{font-size:9px}
-  .kpi-change{font-size:10px;padding:4px 8px}
-  .insights-bar{padding:12px 14px}
+  .dashboard{padding:8px}
+
+  /* Header */
+  .header-top{padding:14px 16px;gap:10px}
+  .header-brand{gap:10px}
+  .header-logo{width:44px}
+  .header-text h1{font-size:clamp(15px,4.5vw,20px)}
+  .header-text p{font-size:10px;margin-top:3px}
+  .header-badge{font-size:8px;padding:2px 6px;margin-left:0;display:block;margin-top:4px}
+
+  /* Filter bar — 2-column grid on mobile */
+  .filter-bar{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0}
+  .filter-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);padding:10px 14px;width:100%}
+  .filter-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.06)}
+  .filter-item:last-child,.filter-item:nth-last-child(2):nth-child(odd)~.filter-item{border-bottom:none}
+  .fi-label{font-size:9px}
+  .filter-item select{min-height:38px;font-size:13px;padding:6px 26px 6px 8px;width:100%}
+  .covid-opt{padding:8px 12px;min-height:38px;display:flex;align-items:center;font-size:11px}
+  .covid-toggle{width:100%}
+
+  /* KPIs — 2 columns */
+  .kpis{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .kpi{padding:12px 14px;border-left-width:3px;border-radius:10px}
+  .kpi-value{font-size:clamp(20px,5.5vw,28px);margin:2px 0 8px}
+  .kpi-label{font-size:9px;letter-spacing:.8px}
+  .kpi-change{font-size:10px;padding:3px 8px}
+  .kpi-sub{gap:4px}
+
+  /* Insights bar */
+  .insights-bar{padding:10px 12px;margin-bottom:16px;border-radius:10px}
+  .insights-bar .insights-label{font-size:9px;margin-bottom:2px}
+  .insights-chips{gap:5px}
   .insight-chip{font-size:10px;padding:5px 8px;border-radius:14px}
-  .card{padding:14px;border-radius:10px}
-  .card h3{font-size:13px;margin-bottom:10px}
-  .card h3 span{display:block;margin-left:0;margin-top:2px}
-  .chart-container{min-height:220px}
-  .chart-container.short{min-height:180px}
-  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+  .insight-chip .ic-icon{font-size:11px}
+
+  /* Section titles */
+  .section-title{font-size:14px;margin:16px 0 8px;padding-bottom:6px}
+
+  /* Cards */
+  .card{padding:12px;border-radius:10px}
+  .card h3{font-size:13px;margin-bottom:8px}
+  .card h3 span{display:block;margin-left:0;margin-top:2px;font-size:11px}
+
+  /* Charts */
+  .chart-container{min-height:200px}
+  .chart-container.short{min-height:170px}
+
+  /* Tabs — horizontal scroll, no scrollbar */
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;gap:0}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{padding:8px 12px;font-size:11px;min-width:max-content}
+  .tab{padding:8px 12px;font-size:11px;min-width:max-content;min-height:38px;display:flex;align-items:center}
+
+  /* Mover filter bar */
+  .mover-filter-bar{margin-top:-4px;margin-bottom:12px;border-radius:8px}
+  .mover-filter-item{padding:10px 14px}
+  .mover-filter-item select{min-height:38px;font-size:13px;width:100%}
+  .mfi-label{font-size:9px}
+  .mfi-icon{width:14px;height:14px}
+
+  /* Tables — horizontal scroll */
+  .data-table-container{-webkit-overflow-scrolling:touch;border-radius:6px}
+  .data-table th,.data-table td{padding:6px 6px;font-size:11px;white-space:nowrap}
+  .data-table th{font-size:10px;position:sticky;top:0;z-index:1}
+
+  /* Heatmap */
   .heatmap-container{-webkit-overflow-scrolling:touch}
-  .heatmap td{min-width:54px;padding:0;font-size:11px}
-  .data-table th,.data-table td{padding:6px 4px;font-size:11px}
-  .section-title{font-size:14px;margin:16px 0 8px}
-  /* Touch targets: ensure selects/buttons are at least 44px */
-  select,.covid-opt,.tab,.toggle{min-height:44px}
-  .filter-item select{min-height:44px;font-size:14px;padding:8px 30px 8px 10px}
-  .covid-opt{padding:10px 16px;min-height:44px;display:flex;align-items:center}
-  .scatter-legend{font-size:10px}
+  .heatmap{border-spacing:2px}
+  .heatmap td{min-width:48px;font-size:10px}
+  .heatmap th{font-size:9px;padding:6px 4px}
+  .heatmap td .hm-cell{border-radius:4px}
+
+  /* Scatter legend */
+  .scatter-legend{font-size:9px;gap:6px}
+  .scatter-dot{width:8px;height:8px}
+
+  /* Bar visual in Top Movers */
+  .bar-bg{min-width:40px!important}
+
+  /* Grids — single column */
+  .grid-2,.grid-3{gap:10px;margin-bottom:14px}
+
+  /* Full-width cards */
+  .full-width{margin-bottom:14px}
+
+  /* Country Breakdown header */
+  #intraRegionTabs{font-size:10px}
+  #intraRegionTabs .tab{padding:6px 10px;font-size:10px}
+
+  /* Footer */
+  .dash-footer{flex-direction:column;gap:12px;margin-top:20px;padding:16px 0;font-size:11px}
+  .dash-footer-col{text-align:left!important}
+
+  /* Touch targets */
+  select,.toggle{min-height:38px}
 }
 
 /* Very small phones */
 @media(max-width:375px){
-  .kpis{grid-template-columns:1fr}
-  .header-logo{width:40px}
+  .dashboard{padding:6px}
+  .kpis{grid-template-columns:1fr;gap:8px}
+  .header-top{padding:12px 14px}
+  .header-logo{width:36px}
+  .header-text h1{font-size:16px}
   .kpi-value{font-size:22px}
+  .filter-bar{grid-template-columns:1fr}
+  .filter-item{border-right:none!important}
+  .card{padding:10px}
+  .card h3{font-size:12px}
+  .chart-container{min-height:180px}
+  .chart-container.short{min-height:150px}
 }
 
 @media print{body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}header{background:#770c16;-webkit-print-color-adjust:exact}}
@@ -456,13 +533,13 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <!-- Footer -->
-<div style="margin-top:32px;padding:20px 0;border-top:1px solid #d6cfc7;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12px;color:#8c8279">
-<div style="display:flex;flex-direction:column;gap:4px">
+<div class="dash-footer">
+<div class="dash-footer-col">
 <span><strong style="color:#5c554d">Data Source</strong>&ensp;<a href="https://stan.stb.gov.sg/content/stan/en/tourism-statistics.html" target="_blank" style="color:#c4182a;text-decoration:none">Singapore Tourism Analytics Network (STB)</a></span>
 <span><strong style="color:#5c554d">Last Updated</strong>&ensp;<span id="footerUpdated">—</span></span>
 <span><strong style="color:#5c554d">Coverage</strong>&ensp;<span id="footerCoverage">—</span></span>
 </div>
-<div style="text-align:right;display:flex;flex-direction:column;gap:4px">
+<div class="dash-footer-col" style="text-align:right">
 <span>Created by <a href="https://www.linkedin.com/in/manek-s/" target="_blank" style="color:#c4182a;text-decoration:none">Manek Shah</a></span>
 <span>Built with Chart.js &middot; Vanilla JS</span>
 <span>&copy; 2026 Singapore Tourism Arrivals Dashboard</span>
