@@ -497,15 +497,9 @@ select:focus{outline:none;border-color:var(--accent)}
 <!-- Section 5: Seasonality -->
 <div class="section-title">Seasonality</div>
 <div style="display:grid;grid-template-columns:1fr;gap:16px">
-<div class="grid-2">
 <div class="card">
-<h3>Annual Arrivals<span>total per year</span></h3>
-<div class="chart-container"><canvas id="chartAnnualBar"></canvas></div>
-</div>
-<div class="card">
-<h3>Yearly Trend<span>colored by column — compare months across years</span></h3>
+<h3>Yearly Trend<span>colored by column — compare years</span></h3>
 <div class="heatmap-container"><table class="heatmap" id="heatmapYearly"></table></div>
-</div>
 </div>
 <div class="card">
 <h3>Monthly Seasonality<span>colored by row — compare months</span></h3>
@@ -1779,71 +1773,6 @@ function updateHeatmap(fd){
   fd.forEach(r=>{const k=r.year+'-'+r.month;byYM[k]=(byYM[k]||0)+r.arrivals});
   const yrs=[...new Set(fd.map(d=>d.year))].sort((a,b)=>a-b);
   if(!yrs.length){document.getElementById('heatmapYearly').innerHTML='';document.getElementById('heatmapMonthly').innerHTML='';return}
-
-  // --- Annual Arrivals bar chart ---
-  const annualTotals=yrs.map(y=>{let t=0;for(let m=1;m<=12;m++)t+=(byYM[y+'-'+m]||0);return t});
-  const annualGrowth=annualTotals.map((v,i)=>i===0?null:(v-annualTotals[i-1])/annualTotals[i-1]*100);
-  const barColors=yrs.map(y=>y>=2020&&y<=2022?'rgba(196,24,42,0.25)':'rgba(119,12,22,0.75)');
-  const barBorders=yrs.map(y=>y>=2020&&y<=2022?'rgba(196,24,42,0.5)':'#770c16');
-
-  getOrCreate('chartAnnualBar',{
-    type:'bar',
-    data:{
-      labels:yrs.map(String),
-      datasets:[{
-        data:annualTotals,
-        backgroundColor:barColors,
-        borderColor:barBorders,
-        borderWidth:1,
-        borderRadius:4,
-        barPercentage:0.75
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          callbacks:{
-            label:ctx=>{
-              const v=ctx.parsed.y;
-              const g=annualGrowth[ctx.dataIndex];
-              let s=fmt(v)+' arrivals';
-              if(g!==null)s+=' ('+( g>=0?'+':'')+g.toFixed(1)+'% YOY)';
-              return s;
-            }
-          }
-        },
-        datalabels:false
-      },
-      scales:{
-        x:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}},
-        y:{
-          beginAtZero:true,
-          ticks:{callback:v=>fmt(v),font:{size:11}},
-          grid:{color:'rgba(0,0,0,.06)'}
-        }
-      }
-    },
-    plugins:[{
-      id:'growthLabels',
-      afterDatasetsDraw(chart){
-        const ctx=chart.ctx;
-        const meta=chart.getDatasetMeta(0);
-        ctx.save();
-        ctx.font='600 10px Roboto,sans-serif';
-        ctx.textAlign='center';
-        meta.data.forEach((bar,i)=>{
-          const g=annualGrowth[i];
-          if(g===null)return;
-          const label=(g>=0?'+':'')+g.toFixed(1)+'%';
-          ctx.fillStyle=g>=0?'#11817a':'#c4182a';
-          ctx.fillText(label,bar.x,bar.y-6);
-        });
-        ctx.restore();
-      }
-    }]
-  });
 
   // --- Yearly Trend: color by column (within each month) ---
   const colMinMax={};
