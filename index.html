@@ -121,7 +121,20 @@ select:focus{outline:none;border-color:var(--accent)}
 .bar-fill.positive{background:linear-gradient(90deg,#15a08a,#11817a)}
 .bar-fill.negative{background:linear-gradient(90deg,#f4333d,#c4182a)}
 
-.section-title{font-size:17px;font-weight:700;margin:28px 0 14px;padding-bottom:8px;border-bottom:3px solid var(--accent);color:var(--text);letter-spacing:-.1px}
+/* Section nav */
+.section-nav{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--border);margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.04);border-radius:0 0 10px 10px;overflow:hidden}
+.section-nav-content{display:flex;align-items:center;gap:0;padding:0 8px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
+.section-nav-content::-webkit-scrollbar{display:none}
+.nav-link{padding:12px 16px;font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer}
+.nav-link:hover{color:var(--text);background:rgba(244,51,61,.04)}
+.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Section title (now clickable) */
+.section-title{font-size:17px;font-weight:700;margin:28px 0 14px;padding-bottom:8px;border-bottom:3px solid var(--accent);color:var(--text);letter-spacing:-.1px;cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none}
+.section-title:hover{opacity:.85}
+.section-title .chevron{font-size:12px;transition:transform .25s;color:var(--muted);flex-shrink:0}
+.section-title.collapsed .chevron{transform:rotate(-90deg)}
+.section-content.hidden{display:none}
 
 /* Mover filter bar */
 .mover-filter-bar{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;padding:0;background:var(--card);border-radius:10px;box-shadow:var(--shadow);margin-bottom:16px;margin-top:-6px;overflow:hidden;border:1px solid var(--border)}
@@ -165,6 +178,8 @@ select:focus{outline:none;border-color:var(--accent)}
   .filter-bar{flex-direction:column;gap:0;padding:0}
   .filter-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.06);padding:12px 20px;width:100%}
   .filter-item:last-child{border-bottom:none}
+  .section-nav{border-radius:0}
+  .nav-link{padding:10px 12px;font-size:11px}
   .section-title{font-size:15px;margin:20px 0 10px}
   .card{padding:16px}
   .card h3{font-size:14px}
@@ -216,6 +231,10 @@ select:focus{outline:none;border-color:var(--accent)}
   .insights-chips{gap:5px}
   .insight-chip{font-size:10px;padding:5px 8px;border-radius:14px}
   .insight-chip .ic-icon{font-size:11px}
+
+  /* Section nav */
+  .section-nav{margin-bottom:12px;border-radius:0}
+  .nav-link{padding:10px 12px;font-size:11px}
 
   /* Section titles */
   .section-title{font-size:14px;margin:16px 0 8px;padding-bottom:6px}
@@ -356,6 +375,19 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 </header>
 
+<!-- Section Navigation -->
+<nav id="sectionNav" class="section-nav">
+<div class="section-nav-content">
+<a class="nav-link active" data-nav="trends">Trends</a>
+<a class="nav-link" data-nav="overnight">Overnight</a>
+<a class="nav-link" data-nav="regional">Regional</a>
+<a class="nav-link" data-nav="movers">Movers</a>
+<a class="nav-link" data-nav="seasonality">Seasonality</a>
+<a class="nav-link" data-nav="concentration">Concentration</a>
+<a class="nav-link" data-nav="data">Data</a>
+</div>
+</nav>
+
 <!-- KPIs -->
 <div class="kpis">
 <div class="kpi"><div class="kpi-label">Total Arrivals</div><div class="kpi-value" id="kpiArrivals">—</div><div class="kpi-sub"><span id="kpiArrYoy" class="kpi-change neutral">—</span><span id="kpiArrVs19" class="kpi-change neutral">vs 2019: —</span></div><div class="kpi-record" id="recArr">&#9733; Record Year</div></div>
@@ -371,7 +403,8 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <!-- Section 1: Trends -->
-<div class="section-title">Arrival Trends</div>
+<div id="sec-trends" class="section-title" onclick="toggleSection('trends')"><span class="chevron">▾</span>Arrival Trends</div>
+<div class="section-content" data-section="trends">
 <div class="grid-2">
 <div class="card">
 <h3>Monthly Arrivals<span>filtered period trend</span></h3>
@@ -382,9 +415,11 @@ select:focus{outline:none;border-color:var(--accent)}
 <div class="chart-container"><canvas id="chartAnnual"></canvas></div>
 </div>
 </div>
+</div>
 
 <!-- Section: Overnight & Length of Stay -->
-<div class="section-title">Overnight Visitors & Length of Stay</div>
+<div id="sec-overnight" class="section-title" onclick="toggleSection('overnight')"><span class="chevron">▾</span>Overnight Visitors &amp; Length of Stay</div>
+<div class="section-content" data-section="overnight">
 <div class="grid-2">
 <div class="card">
 <h3>Overnight Share<span>% of arrivals staying overnight</span></h3>
@@ -399,9 +434,11 @@ select:focus{outline:none;border-color:var(--accent)}
 <h3>Overnight Visitors<span>annual totals with YoY growth</span></h3>
 <div class="chart-container short"><canvas id="chartOvnAnnual"></canvas></div>
 </div>
+</div>
 
 <!-- Section 2: Regional Breakdown -->
-<div class="section-title" id="regionalTitle">Regional Breakdown</div>
+<div id="sec-regional" class="section-title" onclick="toggleSection('regional')"><span class="chevron">▾</span><span id="regionalTitle2">Regional Breakdown</span></div>
+<div class="section-content" data-section="regional">
 <div class="mover-filter-bar" id="regionalControls">
 <div class="mover-filter-item">
 <svg class="mfi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -460,9 +497,11 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 </div>
+</div>
 
 <!-- Section 4: Market Movers -->
-<div class="section-title">Growth & Loss Markets</div>
+<div id="sec-movers" class="section-title" onclick="toggleSection('movers')"><span class="chevron">▾</span>Growth &amp; Loss Markets</div>
+<div class="section-content" data-section="movers">
 <div class="mover-filter-bar">
 <div class="mover-filter-item">
 <svg class="mfi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -498,9 +537,11 @@ select:focus{outline:none;border-color:var(--accent)}
 <div class="data-table-container"><table class="data-table" id="moverTable"><thead><tr><th data-mcol="country">Market</th><th data-mcol="region">Region</th><th data-mcol="arrivals" class="num">Arrivals</th><th data-mcol="share" class="num">Share</th></tr></thead><tbody></tbody></table></div>
 </div>
 </div>
+</div>
 
 <!-- Section 5: Seasonality -->
-<div class="section-title">Seasonality</div>
+<div id="sec-seasonality" class="section-title" onclick="toggleSection('seasonality')"><span class="chevron">▾</span>Seasonality</div>
+<div class="section-content" data-section="seasonality">
 <div style="display:grid;grid-template-columns:1fr;gap:16px">
 <div class="card">
 <h3>Yearly Trend<span>colored by column — compare years</span></h3>
@@ -511,12 +552,14 @@ select:focus{outline:none;border-color:var(--accent)}
 <div class="heatmap-container"><table class="heatmap" id="heatmapMonthly"></table></div>
 </div>
 </div>
+</div>
 
 <!-- Section 6: Concentration -->
-<div class="section-title">Market Concentration</div>
+<div id="sec-concentration" class="section-title" onclick="toggleSection('concentration')"><span class="chevron">▾</span>Market Concentration</div>
+<div class="section-content" data-section="concentration">
 <div class="grid-2">
 <div class="card">
-<h3>Top-5 & Top-10 Share Over Time</h3>
+<h3>Top-5 &amp; Top-10 Share Over Time</h3>
 <div class="chart-container short"><canvas id="chartConcentration"></canvas></div>
 </div>
 <div class="card">
@@ -529,9 +572,11 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 </div>
 </div>
+</div>
 
 <!-- Section 7: Detail -->
-<div class="section-title">Detailed Data</div>
+<div id="sec-data" class="section-title" onclick="toggleSection('data')"><span class="chevron">▾</span>Detailed Data</div>
+<div class="section-content" data-section="data">
 <div class="card full-width">
 <div class="data-table-container" style="max-height:500px"><table class="data-table" id="detailTable"><thead><tr><th data-col="date">Date</th><th data-col="country">Country</th><th data-col="region">Region</th><th data-col="arrivals" class="num">Arrivals</th><th data-col="overnight" class="num">Overnight</th><th data-col="share" class="num">Ovn Share</th><th data-col="alos" class="num">ALOS</th></tr></thead><tbody></tbody></table></div>
 </div>
@@ -833,6 +878,65 @@ Chart.register({id:'intraGrowthLabels',afterDraw(chart){
   ctx.restore();
 }});
 
+// --- Section Navigation & Collapse ---
+const SECTIONS=['trends','overnight','regional','movers','seasonality','concentration','data'];
+const collapsedSections=new Set();
+
+function toggleSection(name){
+  const title=document.getElementById('sec-'+name);
+  const content=document.querySelector('.section-content[data-section="'+name+'"]');
+  if(!title||!content)return;
+  if(collapsedSections.has(name)){
+    collapsedSections.delete(name);
+    title.classList.remove('collapsed');
+    content.classList.remove('hidden');
+  } else {
+    collapsedSections.add(name);
+    title.classList.add('collapsed');
+    content.classList.add('hidden');
+  }
+}
+
+// Smooth scroll on nav click
+document.getElementById('sectionNav').addEventListener('click',function(e){
+  const link=e.target.closest('.nav-link');
+  if(!link)return;
+  const name=link.dataset.nav;
+  const target=document.getElementById('sec-'+name);
+  if(!target)return;
+  // Uncollapse if collapsed
+  if(collapsedSections.has(name))toggleSection(name);
+  target.scrollIntoView({behavior:'smooth',block:'start'});
+});
+
+// Highlight active nav link on scroll
+(function(){
+  const navLinks=document.querySelectorAll('.nav-link[data-nav]');
+  const sectionEls=SECTIONS.map(s=>document.getElementById('sec-'+s)).filter(Boolean);
+  let ticking=false;
+  const obs=new IntersectionObserver(function(entries){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){
+      // Find the first visible section
+      let active=null;
+      for(const sec of sectionEls){
+        const rect=sec.getBoundingClientRect();
+        if(rect.top<=120){active=sec.dataset?sec.id:null}
+      }
+      if(active){
+        const name=active.replace('sec-','');
+        navLinks.forEach(l=>l.classList.toggle('active',l.dataset.nav===name));
+        // Scroll nav link into view on mobile
+        const activeLink=document.querySelector('.nav-link[data-nav="'+name+'"]');
+        if(activeLink)activeLink.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+      }
+      ticking=false;
+    });
+  },{rootMargin:'-80px 0px -60% 0px',threshold:0});
+  sectionEls.forEach(el=>obs.observe(el));
+})();
+
 // Chart instances
 let charts={};
 function getOrCreate(id,cfg){if(charts[id]){charts[id].destroy()}charts[id]=new Chart(document.getElementById(id),cfg);return charts[id]}
@@ -847,7 +951,7 @@ function update(){
   updateAnnualChart(fd);
   updateOvernightCharts(fd);
   document.getElementById('regionalControls').style.display=fC.value!=='All'?'none':'flex';
-  document.getElementById('regionalTitle').textContent=fC.value!=='All'?fC.value+' — Regional Context':'Regional Breakdown';
+  document.getElementById('regionalTitle2').textContent=fC.value!=='All'?fC.value+' — Regional Context':'Regional Breakdown';
   updateRegionPie(fd);
   updateRegionStack();
   updateIntraRegion();
