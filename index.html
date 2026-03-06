@@ -118,6 +118,17 @@ select:focus{outline:none;border-color:var(--accent)}
 
 .section-title{font-size:17px;font-weight:700;margin:28px 0 14px;padding-bottom:8px;border-bottom:3px solid var(--accent);color:var(--text);letter-spacing:-.1px}
 
+/* Mover filter bar */
+.mover-filter-bar{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;padding:0;background:var(--card);border-radius:10px;box-shadow:var(--shadow);margin-bottom:16px;margin-top:-6px;overflow:hidden;border:1px solid var(--border)}
+.mover-filter-item{display:flex;align-items:center;gap:10px;padding:12px 20px;border-right:1px solid var(--border);position:relative}
+.mover-filter-item:last-child{border-right:none}
+.mfi-icon{width:16px;height:16px;color:var(--accent);opacity:.6;flex-shrink:0}
+.mfi-group{display:flex;flex-direction:column;gap:2px}
+.mfi-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap}
+.mover-filter-item select{padding:4px 26px 4px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-weight:500;background:var(--bg);color:var(--text);cursor:pointer;transition:all .2s;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b6b6b'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.mover-filter-item select:hover{border-color:var(--accent);background-color:#fff}
+.mover-filter-item select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(244,51,61,.1)}
+
 /* Scatter legend */
 .scatter-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:11px}
 .scatter-legend-item{display:flex;align-items:center;gap:4px}
@@ -154,6 +165,9 @@ select:focus{outline:none;border-color:var(--accent)}
   .insight-chip{padding:6px 10px;font-size:11px}
   /* Stack the Regional Breakdown header controls */
   div[style*="justify-content:space-between"]{flex-direction:column;align-items:flex-start!important}
+  .mover-filter-bar{flex-direction:column}
+  .mover-filter-item{border-right:none;border-bottom:1px solid var(--border)}
+  .mover-filter-item:last-child{border-bottom:none}
 }
 
 /* Mobile phones */
@@ -305,11 +319,21 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <!-- Section 2: Regional Breakdown -->
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-<div class="section-title" style="margin-bottom:0" id="regionalTitle">Regional Breakdown</div>
-<div id="regionalControls" style="display:flex;align-items:center;gap:8px">
-<label style="font-size:12px;font-weight:600;color:var(--muted)">View</label><select id="fPieView" style="font-size:12px;padding:3px 6px"><option value="region">By Region</option><option value="country">By Country</option></select>
-<label style="font-size:12px;font-weight:600;color:var(--muted)">Show</label><select id="fRegionalTop" style="font-size:12px;padding:3px 6px"><option value="5">Top 5</option><option value="10" selected>Top 10</option><option value="15">Top 15</option><option value="0">All</option></select>
+<div class="section-title" id="regionalTitle">Regional Breakdown</div>
+<div class="mover-filter-bar" id="regionalControls">
+<div class="mover-filter-item">
+<svg class="mfi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+<div class="mfi-group">
+<div class="mfi-label">View</div>
+<select id="fPieView"><option value="region">By Region</option><option value="country">By Country</option></select>
+</div>
+</div>
+<div class="mover-filter-item">
+<svg class="mfi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
+<div class="mfi-group">
+<div class="mfi-label">Show</div>
+<select id="fRegionalTop"><option value="5">Top 5</option><option value="10" selected>Top 10</option><option value="15">Top 15</option><option value="0">All</option></select>
+</div>
 </div>
 </div>
 <div class="grid-2">
@@ -326,8 +350,10 @@ select:focus{outline:none;border-color:var(--accent)}
 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
 <h3 id="intraRegionTitle" style="margin:0">Country Breakdown:<span style="margin-left:6px;font-weight:400;color:var(--accent)">All Regions</span></h3>
 <div class="tabs" id="intraModeTabs" style="margin-bottom:0">
-<div class="tab active" data-tab="yoy">YoY Growth</div>
-<div class="tab" data-tab="vs19">vs 2019</div>
+<div class="tab active" data-tab="yoy">1YR</div>
+<div class="tab" data-tab="vs19">VS 2019</div>
+<div class="tab" data-tab="5yr">5YR</div>
+<div class="tab" data-tab="10yr">10YR</div>
 </div>
 </div>
 <div class="tabs" id="intraRegionTabs"></div>
@@ -354,11 +380,21 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 
 <!-- Section 4: Market Movers -->
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-<div class="section-title" style="margin-bottom:0">Growth & Loss Markets</div>
-<div style="display:flex;align-items:center;gap:8px">
-<label style="font-size:12px;font-weight:600;color:var(--muted)">View</label><select id="fMoverView" style="font-size:12px;padding:3px 6px"><option value="country">By Country</option><option value="region">By Region</option></select>
-<span id="moverRegionGroup"><label style="font-size:12px;font-weight:600;color:var(--muted)">Region</label><select id="fMoverRegion" style="font-size:12px;padding:3px 6px"><option value="All">All Regions</option></select></span>
+<div class="section-title">Growth & Loss Markets</div>
+<div class="mover-filter-bar">
+<div class="mover-filter-item">
+<svg class="mfi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+<div class="mfi-group">
+<div class="mfi-label">View</div>
+<select id="fMoverView"><option value="country">By Country</option><option value="region">By Region</option></select>
+</div>
+</div>
+<div class="mover-filter-item" id="moverRegionGroup">
+<svg class="mfi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2"/></svg>
+<div class="mfi-group">
+<div class="mfi-label">Region</div>
+<select id="fMoverRegion"><option value="All">All Regions</option></select>
+</div>
 </div>
 </div>
 <div class="grid-2">
@@ -366,7 +402,7 @@ select:focus{outline:none;border-color:var(--accent)}
 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:4px">
 <h3 style="margin:0">Growth vs Volume Scatter<span>bubble = market size</span></h3>
 <div class="tabs" id="scatterHorizonTabs" style="margin-bottom:0">
-<div class="tab active" data-hz="yoy">YOY</div>
+<div class="tab active" data-hz="yoy">1YR</div>
 <div class="tab" data-hz="vs19">VS 2019</div>
 <div class="tab" data-hz="5yr">5YR</div>
 <div class="tab" data-hz="10yr">10YR</div>
@@ -377,7 +413,7 @@ select:focus{outline:none;border-color:var(--accent)}
 </div>
 <div class="card">
 <h3>Top Movers<span>latest full year vs prior</span></h3>
-<div class="data-table-container"><table class="data-table" id="moverTable"><thead><tr><th data-mcol="country">Market</th><th data-mcol="region">Region</th><th data-mcol="arrivals" class="num">Arrivals</th><th data-mcol="share" class="num">Share</th><th data-mcol="change" style="width:140px">YOY</th><th data-mcol="vs19" class="num" style="width:70px">VS 2019</th><th data-mcol="g5" class="num" style="width:70px">5YR</th><th data-mcol="g10" class="num" style="width:70px">10YR</th></tr></thead><tbody></tbody></table></div>
+<div class="data-table-container"><table class="data-table" id="moverTable"><thead><tr><th data-mcol="country">Market</th><th data-mcol="region">Region</th><th data-mcol="arrivals" class="num">Arrivals</th><th data-mcol="share" class="num">Share</th></tr></thead><tbody></tbody></table></div>
 </div>
 </div>
 
@@ -1139,8 +1175,14 @@ function updateIntraOvnAlos(d,topCountries,useYear){
   // Current year and previous year data for % change
   const curData=d.filter(r=>r.year===useYear);
   const curMonths=new Set(curData.map(r=>r.month));
-  const py=intraMode==='yoy'?useYear-1:2019;
-  const refSource=intraMode==='vs19'?DATA.filter(r=>{let ok=true;if(selRegion!=='All')ok=ok&&r.region===selRegion;if(fC.value!=='All')ok=ok&&r.country===fC.value;return ok}):d;
+  const skipCovOvn=fCov.checked;const covidSetOvn=new Set([2020,2021,2022]);
+  function ovnRef(n){let yr=useYear,count=0;while(count<n&&yr>2000){yr--;if(skipCovOvn&&covidSetOvn.has(yr))continue;count++}return yr}
+  let py;
+  if(intraMode==='yoy')py=useYear-1;
+  else if(intraMode==='vs19')py=2019;
+  else if(intraMode==='5yr')py=ovnRef(5);
+  else py=ovnRef(10);
+  const refSource=intraMode==='yoy'?d:DATA.filter(r=>{let ok=true;if(selRegion!=='All')ok=ok&&r.region===selRegion;if(fC.value!=='All')ok=ok&&r.country===fC.value;return ok});
   const prevData=refSource.filter(r=>r.year===py&&curMonths.has(r.month));
 
   // Aggregate by country — current
@@ -1183,9 +1225,10 @@ function updateIntraOvnAlos(d,topCountries,useYear){
   }
 
   const regionLabel=fC.value!=='All'?fC.value:(selRegion==='All'?'All Regions':selRegion);
-  const refLabel=intraMode==='yoy'?'YoY':'vs 2019';
+  const hzLabelsOvn={yoy:'YoY',vs19:'vs 2019','5yr':'5YR','10yr':'10YR'};
+  const refLabel=hzLabelsOvn[intraMode]||'YoY';
   const monthLabel=curMonths.size<12?' ('+[...curMonths].sort((a,b)=>a-b).map(m=>MONTHS[m-1]).join(', ')+')':'';
-  const ovnBarLabel=useYear+' vs '+(intraMode==='yoy'?py:'2019')+monthLabel;
+  const ovnBarLabel=useYear+' vs '+py+monthLabel;
   document.getElementById('ovnShareBarTitle').innerHTML=`Overnight Share<span>${regionLabel} · ${ovnBarLabel}</span>`;
   document.getElementById('chartOvnShareBar').parentElement.style.minHeight=Math.max(250,ovnData.length*26)+'px';
   const ovnGrowthRates=ovnData.map(d=>d.delta);
@@ -1262,11 +1305,17 @@ function updateIntraRegion(){
   // Get latest and reference years for growth
   const availYears=[...new Set(d.map(r=>r.year))].sort((a,b)=>a-b);
   const ly=availYears[availYears.length-1];
-  const py=intraMode==='yoy'?(availYears.length>1?availYears[availYears.length-2]:null):2019;
+  const skipCovIntra=fCov.checked;const covidSetIntra=new Set([2020,2021,2022]);
+  function intraRef(n){let yr=ly,count=0;while(count<n&&yr>2000){yr--;if(skipCovIntra&&covidSetIntra.has(yr))continue;count++}return yr}
+  let py;
+  if(intraMode==='yoy')py=availYears.length>1?availYears[availYears.length-2]:null;
+  else if(intraMode==='vs19')py=2019;
+  else if(intraMode==='5yr')py=intraRef(5);
+  else py=intraRef(10);
   // Match months for fair comparison
   const lyMonthsIntra=new Set(d.filter(r=>r.year===ly).map(r=>r.month));
-  // For vs2019, pull ref data from full dataset (may be outside year filter)
-  const intraRefData=intraMode==='vs19'?DATA.filter(r=>{let ok=true;if(selRegion!=='All')ok=ok&&r.region===selRegion;if(fC.value!=='All')ok=ok&&r.country===fC.value;return ok}):d;
+  // For non-yoy modes, pull ref data from full dataset (may be outside year filter)
+  const intraRefData=intraMode==='yoy'?d:DATA.filter(r=>{let ok=true;if(selRegion!=='All')ok=ok&&r.region===selRegion;if(fC.value!=='All')ok=ok&&r.country===fC.value;return ok});
   d.forEach(r=>{if(r.year===ly&&lyMonthsIntra.has(r.month))(byCountry[r.country]||{}).cur=(byCountry[r.country]?.cur||0)+r.arrivals});
   if(py)intraRefData.forEach(r=>{if(r.year===py&&lyMonthsIntra.has(r.month)){if(!byCountry[r.country])byCountry[r.country]={a:0,cur:0,prev:0};byCountry[r.country].prev+=r.arrivals}});
 
@@ -1285,7 +1334,7 @@ function updateIntraRegion(){
   const labels=sorted.map(s=>s[0]);
   const growthRates=sorted.map(s=>{const c=s[1];if(!c.prev)return null;return(c.cur-c.prev)/c.prev*100});
   const monthLabel=lyMonthsIntra.size<12?' ('+[...lyMonthsIntra].sort((a,b)=>a-b).map(m=>MONTHS[m-1]).join(', ')+')':'';
-  const refLabel=intraMode==='yoy'&&py?py:'2019';
+  const refLabel=py||'N/A';
   const barLabel=ly+' vs '+refLabel+monthLabel;
   const regionLabel=fC.value!=='All'?fC.value:(selRegion==='All'?'All Regions':selRegion);
   document.getElementById('intraBarTitle').innerHTML=`Arrivals<span>${regionLabel} · ${barLabel}</span>`;
@@ -1456,6 +1505,7 @@ document.getElementById('scatterHorizonTabs').addEventListener('click',e=>{
 });
 
 document.querySelectorAll('#moverTable th[data-mcol]').forEach(th=>{
+  th.style.cursor='pointer';
   th.addEventListener('click',()=>{
     const col=th.dataset.mcol;
     if(moverSort.col===col)moverSort.asc=!moverSort.asc;
@@ -1545,14 +1595,46 @@ function renderMoverRows(){
   // Update first column header label based on view
   const firstTh=document.querySelector('#moverTable th[data-mcol="country"]');
   const firstLabel=viewMode==='region'?'Region':'Market';
-  firstTh.textContent=firstLabel;
+  firstTh.textContent=firstLabel+(col==='country'?(asc?' ▲':' ▼'):'');
+  // Update sort indicators on static headers
+  const staticLabels={region:'Region',arrivals:'Arrivals',share:'Share'};
+  Object.entries(staticLabels).forEach(([k,lbl])=>{
+    const th=document.querySelector('#moverTable th[data-mcol="'+k+'"]');
+    if(th)th.textContent=lbl+(col===k?(asc?' ▲':' ▼'):'');
+  });
 
-  // Update header sort indicators
+  // Determine which growth column gets the bar visual (follows sort)
+  const barCol=col==='vs19'||col==='g5'||col==='g10'?col:'change';
+
+  // Update header: rebuild growth columns with dynamic bar column
+  const thead=document.querySelector('#moverTable thead tr');
+  // Remove old growth ths and rebuild
+  const growthColNames=['change','vs19','g5','g10'];
+  const growthLabels={change:'1YR',vs19:'VS 2019',g5:'5YR',g10:'10YR'};
   document.querySelectorAll('#moverTable th[data-mcol]').forEach(th=>{
-    const c=th.dataset.mcol;
-    let label=th.textContent.replace(/ [▲▼]/,'');
-    if(c===col)label+=asc?' ▲':' ▼';
+    if(growthColNames.includes(th.dataset.mcol)||th.dataset.mcol==='bar')th.remove();
+  });
+  growthColNames.forEach(k=>{
+    const th=document.createElement('th');
+    th.dataset.mcol=k;
+    th.className='num';
+    th.style.width='70px';
+    let label=growthLabels[k];
+    if(col===k)label+=asc?' ▲':' ▼';
     th.textContent=label;
+    th.style.cursor='pointer';
+    th.addEventListener('click',()=>{
+      if(moverSort.col===k)moverSort.asc=!moverSort.asc;
+      else{moverSort.col=k;moverSort.asc=false}
+      renderMoverRows();
+    });
+    thead.appendChild(th);
+    if(k===barCol){
+      const barTh=document.createElement('th');
+      barTh.dataset.mcol='bar';
+      barTh.style.width='80px';
+      thead.appendChild(barTh);
+    }
   });
 
   // Show/hide Region column in region view (redundant there)
@@ -1560,24 +1642,34 @@ function renderMoverRows(){
   regionTh.style.display=viewMode==='region'?'none':'';
 
   const totalArrivals=source.reduce((s,r)=>s+r.arrivals,0);
-  const maxAbs=Math.max(...source.map(r=>Math.abs(r.change)),1);
+  const maxAbs=Math.max(...source.map(r=>{const v=r[barCol];return v!==null?Math.abs(v):0}),1);
   const tbody=document.querySelector('#moverTable tbody');
+
+  function growthCell(val){
+    if(val===null)return'<td class="num" style="font-weight:600;font-size:12px;color:var(--muted)">—</td>';
+    const txt=(val>=0?'+':'')+val.toFixed(1)+'%';
+    const clr=val>=0?'#11817a':'#c4182a';
+    return`<td class="num" style="font-weight:600;font-size:12px;color:${clr}">${txt}</td>`;
+  }
+  function barTd(val){
+    if(val===null)return'<td class="num"></td>';
+    const barW=Math.min(Math.abs(val)/maxAbs*100,100);
+    const cls=val>=0?'positive':'negative';
+    const dir=val>=0?'right':'left';
+    return`<td style="padding:0 4px"><div class="bar-bg" style="width:100%;min-width:60px"><div class="bar-fill ${cls}" style="width:${barW}%;float:${dir}"></div></div></td>`;
+  }
+
   tbody.innerHTML=source.map(r=>{
-    const barW=Math.min(Math.abs(r.change)/maxAbs*100,100);
-    const cls=r.change>=0?'positive':'negative';
-    const dir=r.change>=0?'right':'left';
     const regionCol=viewMode==='region'?'':'<td>'+r.region+'</td>';
     const nameStyle=viewMode==='region'?'font-weight:600;color:'+REGION_COLORS[r.region]:'';
     const share=totalArrivals?(r.arrivals/totalArrivals*100).toFixed(1)+'%':'—';
-    const changeTxt=(r.change>=0?'+':'')+r.change.toFixed(1)+'%';
-    const changeClr=r.change>=0?'#11817a':'#c4182a';
-    const vs19Txt=r.vs19!==null?((r.vs19>=0?'+':'')+r.vs19.toFixed(1)+'%'):'—';
-    const vs19Clr=r.vs19!==null?(r.vs19>=0?'#11817a':'#c4182a'):'var(--muted)';
-    const g5Txt=r.g5!==null?((r.g5>=0?'+':'')+r.g5.toFixed(1)+'%'):'—';
-    const g5Clr=r.g5!==null?(r.g5>=0?'#11817a':'#c4182a'):'var(--muted)';
-    const g10Txt=r.g10!==null?((r.g10>=0?'+':'')+r.g10.toFixed(1)+'%'):'—';
-    const g10Clr=r.g10!==null?(r.g10>=0?'#11817a':'#c4182a'):'var(--muted)';
-    return `<tr><td style="${nameStyle}">${flagImg(r.country)}${r.country}</td>${regionCol}<td class="num">${fmtFull(r.arrivals)}</td><td class="num" style="color:var(--muted)">${share}</td><td><div class="bar-cell"><span style="min-width:52px;font-weight:600;font-size:12px;color:${changeClr}">${changeTxt}</span><div class="bar-bg"><div class="bar-fill ${cls}" style="width:${barW}%;float:${dir}"></div></div></div></td><td class="num" style="font-weight:600;font-size:12px;color:${vs19Clr}">${vs19Txt}</td><td class="num" style="font-weight:600;font-size:12px;color:${g5Clr}">${g5Txt}</td><td class="num" style="font-weight:600;font-size:12px;color:${g10Clr}">${g10Txt}</td></tr>`}).join('');
+    const barVal=r[barCol];
+    let cells='';
+    ['change','vs19','g5','g10'].forEach(k=>{
+      cells+=growthCell(r[k]);
+      if(k===barCol)cells+=barTd(barVal);
+    });
+    return`<tr><td style="${nameStyle}">${flagImg(r.country)}${r.country}</td>${regionCol}<td class="num">${fmtFull(r.arrivals)}</td><td class="num" style="color:var(--muted)">${share}</td>${cells}</tr>`}).join('');
 }
 
 // --- Heatmaps ---
