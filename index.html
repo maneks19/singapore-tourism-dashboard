@@ -1075,15 +1075,15 @@ function update(){
 
 // --- KPIs ---
 function updateKPIs(fd){
-  // Get latest full year in filtered data
+  // Always use the latest year in filtered data (show YTD if partial)
   const yearsInData=[...new Set(fd.map(d=>d.year))].sort((a,b)=>a-b);
   const latestYear=yearsInData.length>0?yearsInData[yearsInData.length-1]:2025;
-  // Check if latest year has 12 months
   const latestMonths=[...new Set(fd.filter(d=>d.year===latestYear).map(d=>d.month))];
-  const useYear=latestMonths.length>=12?latestYear:(yearsInData.length>1?yearsInData[yearsInData.length-2]:latestYear);
-  
+  const useYear=latestYear;
+  const isYTD=latestMonths.length<12;
+
   const curData=fd.filter(d=>d.year===useYear);
-  // For YoY, get previous year with same month coverage
+  // For YoY, match only months available in the latest year
   const curMonths=new Set(curData.map(d=>d.month));
   const prevYear=useYear-1;
   const prevData=DATA.filter(d=>d.year===prevYear&&curMonths.has(d.month));
@@ -1110,10 +1110,12 @@ function updateKPIs(fd){
     el.textContent=txt;el.className='kpi-change '+(p>=0?'up':'down');
   };
   
-  setChange('kpiArrYoy',ca,pa,' Year over Year');setChange('kpiArrVs19',ca,na,' vs 2019');
-  setChange('kpiOvnYoy',co,po,' Year over Year');setChange('kpiOvnVs19',co,no,' vs 2019');
-  setChange('kpiShareYoy',cs,ps,' pts Year over Year',true);setChange('kpiShareVs19',cs,ns,' pts vs 2019',true);
-  setChange('kpiAlosYoy',cl,pl,' days Year over Year',true);setChange('kpiAlosVs19',cl,nl,' days vs 2019',true);
+  const yoyLabel=isYTD?' YTD YoY':' Year over Year';
+  const vs19Label=isYTD?' YTD vs 2019':' vs 2019';
+  setChange('kpiArrYoy',ca,pa,yoyLabel);setChange('kpiArrVs19',ca,na,vs19Label);
+  setChange('kpiOvnYoy',co,po,yoyLabel);setChange('kpiOvnVs19',co,no,vs19Label);
+  setChange('kpiShareYoy',cs,ps,' pts'+yoyLabel,true);setChange('kpiShareVs19',cs,ns,' pts'+vs19Label,true);
+  setChange('kpiAlosYoy',cl,pl,' days'+yoyLabel,true);setChange('kpiAlosVs19',cl,nl,' days'+vs19Label,true);
 
   // --- Records: check if current year is all-time high ---
   // Build historical yearly aggregates with same geo + covid filters
