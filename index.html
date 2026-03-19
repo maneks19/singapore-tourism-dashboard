@@ -9,6 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#f5f3f0;--card:#fff;--text:#1a1a1a;--muted:#6b6b6b;--accent:#f4333d;--accent2:#770c16;--accent3:#11817a;--border:#e0dcd7;--shadow:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);--shadow-lg:0 6px 16px rgba(119,12,22,.08),0 2px 6px rgba(0,0,0,.04)}
+:root.dark-mode{--bg:#141416;--card:#1e1e22;--text:#e2e0dd;--muted:#9a9691;--accent:#ff4f58;--accent2:#a81520;--accent3:#1cc4b8;--border:#2e2e33;--shadow:0 1px 3px rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.2);--shadow-lg:0 6px 16px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.2)}
 body{font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;font-size:14px}
 .dashboard{max-width:1800px;margin:0 auto;padding:24px}
 header{margin-bottom:24px;border-radius:14px;box-shadow:0 4px 20px rgba(119,12,22,.18);color:#fff;overflow:hidden}
@@ -167,6 +168,34 @@ select:focus{outline:none;border-color:var(--accent)}
 /* Footer */
 .dash-footer{margin-top:32px;padding:20px 0;border-top:1px solid #d6cfc7;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;font-size:12px;color:#8c8279}
 .dash-footer-col{display:flex;flex-direction:column;gap:4px}
+
+/* Dark mode theme toggle */
+.theme-toggle{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.7);flex-shrink:0}
+.theme-toggle:hover{background:rgba(255,255,255,.2)}
+.theme-toggle svg{width:18px;height:18px}
+.theme-toggle .icon-moon{display:none}
+.dark-mode .theme-toggle .icon-sun{display:none}
+.dark-mode .theme-toggle .icon-moon{display:block}
+
+/* Dark mode overrides for hardcoded colors */
+.dark-mode .header-top{background:linear-gradient(135deg,#3a1218 0%,#2a0e14 40%,#1a0a0e 100%)}
+.dark-mode .filter-bar{background:#1a0a0e}
+.dark-mode .section-nav{background:var(--card);border-color:var(--border)}
+.dark-mode select{background:var(--card);color:var(--text);border-color:var(--border)}
+.dark-mode select option{background:var(--card);color:var(--text)}
+.dark-mode .filter-item select{background:rgba(255,255,255,.08)}
+.dark-mode .mover-filter-item select:hover{background-color:var(--card)}
+.dark-mode .kpi{border-left-color:var(--accent)}
+.dark-mode .heatmap th{background:var(--card)}
+.dark-mode .heatmap .row-label{background:var(--card)}
+.dark-mode .data-table th{background:var(--card);color:var(--text)}
+.dark-mode .data-table td{border-color:var(--border)}
+.dark-mode .data-table tbody tr:hover{background:rgba(255,255,255,.04)}
+.dark-mode .dash-footer{border-top-color:var(--border);color:var(--muted)}
+.dark-mode .insight-chip{background:var(--bg);border-color:var(--border);color:var(--text)}
+.dark-mode .summary-card{background:var(--card)}
+.dark-mode .bar-bg{background:var(--bg)}
+.dark-mode ::-webkit-scrollbar-thumb{background:#4a4a4a}
 
 /* ===== Responsive breakpoints ===== */
 
@@ -344,6 +373,11 @@ select:focus{outline:none;border-color:var(--accent)}
 <h1>Singapore Tourism Arrivals</h1>
 <p>Monthly visitor data by origin market <span class="header-badge">Jan 2008 — Feb 2026</span></p>
 </div>
+</div>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
 </div>
 </div>
 <div class="filter-bar">
@@ -917,6 +951,41 @@ Chart.register({id:'intraGrowthLabels',afterDraw(chart){
   });
   ctx.restore();
 }});
+
+// --- Dark Mode ---
+(function(){
+  const root=document.documentElement;
+  const toggle=document.getElementById('themeToggle');
+  // Restore from localStorage
+  if(localStorage.getItem('dashDark')==='true')root.classList.add('dark-mode');
+  toggle.addEventListener('click',()=>{
+    root.classList.toggle('dark-mode');
+    const isDark=root.classList.contains('dark-mode');
+    localStorage.setItem('dashDark',isDark);
+    updateChartTheme();
+  });
+})();
+function updateChartTheme(){
+  const isDark=document.documentElement.classList.contains('dark-mode');
+  const textCol=isDark?'#e2e0dd':'#1a1a1a';
+  const gridCol=isDark?'#2e2e33':'#ece8e3';
+  const mutedCol=isDark?'#9a9691':'#6b6b6b';
+  Object.values(charts).forEach(c=>{
+    if(!c||!c.options)return;
+    try{
+      if(c.options.plugins&&c.options.plugins.legend&&c.options.plugins.legend.labels)c.options.plugins.legend.labels.color=textCol;
+      ['x','y','y1'].forEach(axis=>{
+        if(c.options.scales&&c.options.scales[axis]){
+          const s=c.options.scales[axis];
+          if(s.ticks)s.ticks.color=mutedCol;
+          if(s.grid)s.grid.color=gridCol;
+          if(s.title)s.title.color=mutedCol;
+        }
+      });
+      c.update('none');
+    }catch(e){}
+  });
+}
 
 // --- Section Navigation & Collapse ---
 const SECTIONS=['trends','overnight','regional','movers','seasonality','concentration','data'];
@@ -2237,6 +2306,7 @@ function updateDetailTable(fd){
 // Read URL hash state and render
 readHash();
 update();
+updateChartTheme();
 window.addEventListener('hashchange',()=>{readHash();update()});
 </script>
 </body>
