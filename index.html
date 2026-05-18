@@ -1415,7 +1415,7 @@ function updateTrendChart(fd){
   const trendMin=Math.min(...vals.filter(v=>v!==null));
   const trendFloor=Math.max(0,Math.floor(trendMin*0.85));
   const trendCeil=Math.ceil(peakVal*1.08);
-  getOrCreate('chartTrend',{type:'line',data:{labels:dates,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},scales:{x:{ticks:{maxTicksLimit:20,font:{size:10}},grid:{color:'#ece8e3'}},y:{min:trendFloor,max:trendCeil,ticks:{callback:v=>fmt(v)},grid:{color:'#ece8e3'}}},plugins:{legend:{position:'top',labels:{font:{size:11}}}}}});
+  getOrCreate('chartTrend',{type:'line',data:{labels:dates,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},scales:{x:{ticks:{maxTicksLimit:28,font:{size:10}},grid:{color:'#ece8e3'}},y:{min:trendFloor,max:trendCeil,ticks:{callback:v=>fmt(v)},grid:{color:'#ece8e3'}}},plugins:{legend:{position:'top',labels:{font:{size:11}}}}}});
 }
 
 // --- Annual Chart ---
